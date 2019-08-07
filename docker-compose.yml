@@ -4,14 +4,16 @@ volumes:
   cache:
 services:
   postgres:
-    image: "openmaptiles/postgis:2.9"
+    image: "sophox/postgis:latest"
     volumes:
     - pgdata:/var/lib/postgresql/data
+    - ./tweak_postgres.conf:/etc/postgresql/postgresql.conf
     networks:
     - postgres_conn
     ports:
      - "5432"
     env_file: .env
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
   import-natural-earth:
     image: "openmaptiles/import-natural-earth:1.4"
     env_file: .env
@@ -113,6 +115,7 @@ services:
       BBOX: ${BBOX}
       MIN_ZOOM: ${MIN_ZOOM}
       MAX_ZOOM: ${MAX_ZOOM}
+      UV_THREADPOOL_SIZE: ${UV_THREADPOOL_SIZE}
   postserve:
     image: "openmaptiles/postserve:0.2"
     env_file: .env
